@@ -1,7 +1,7 @@
-class CalculadoraController {
+class CalcController {
     constructor() {
         this.displayCalc = "0";
-        this.dataAtual = new Date();
+        this.correntDate = new Date();
     }
 
     get displayCalc() {
@@ -10,12 +10,12 @@ class CalculadoraController {
     set displayCalc(valor) {
         this._displayCalc = valor;
     }
-    get dataAtual() {
-        return this._dataAtual;
+    get correntDate() {
+        return this._correntDate;
     }
-    set dataAtual(valor) {
+    set correntDate(valor) {
         if (valor instanceof Date) {
-            this._dataAtual = valor;
+            this._correntDate = valor;
         } else {
             throw new Error("Data inválida");
         }
