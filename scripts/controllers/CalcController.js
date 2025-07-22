@@ -82,7 +82,7 @@ class CalcController {
             case '7':
             case '8':
             case '9':
-                this.addOperation(parseInt(value));
+                this.addOperation(parseFloat(value));
                 console.log(this._operation);
                 this.setLastNumeberToDisplay();
                 break;
@@ -199,7 +199,7 @@ class CalcController {
                 this.setLastOperation(value);
             } else if (!isNaN(value)) {
                 // Adiciona um número após um operador
-                this.pushOperation(parseInt(value));
+                this.pushOperation(parseFloat(value));
                 this.setLastNumeberToDisplay();
             } 
         } else {
@@ -209,7 +209,7 @@ class CalcController {
                 this.pushOperation(value);
             }else {
                 // Concatena o número ao último número
-                let newValue = parseInt(this.getLastOperation().toString() + value.toString());
+                let newValue = this.getLastOperation().toString() + value.toString();
                 this.setLastOperation(newValue);
 
                 this.setLastNumeberToDisplay();
@@ -220,7 +220,7 @@ class CalcController {
     addDot(value) {
         // Verifica se o último número já contém um ponto
         let lastOperation = this.getLastOperation();
-        if (typeof lastOperation === 'string' && lastOperation.includes('.')) return;
+        if (typeof lastOperation === 'string' && lastOperation.split('').indexOf('.') > -1) return;
 
         // Se o último número não for um operador, adiciona o ponto
         if (this.isOperator(lastOperation) || !lastOperation) {
@@ -258,6 +258,26 @@ class CalcController {
         });
     }
 
+    initKeyBoard() {
+        document.addEventListener('keyup', e => {
+            // Verifica se a tecla pressionada é um número ou um operador
+            if (e.key.match(/[0-9]/)) {
+                this.addOperation(parseFloat(e.key));
+            } else if (['+', '-', '*', '/', '%'].indexOf(e.key) > -1) {
+                this.addOperation(e.key);
+            } else if (e.key === 'Enter' || e.key === '=') {
+                this.calc();
+            } else if (e.key === 'Escape') {
+                this.clearAll();
+            } else if (e.key === 'Backspace') {
+                this.clearEntry();
+            } else if (e.key === '.') {
+                this.addDot('.');
+            } else {
+                this.setError();
+            }
+        })
+    }
     // Define o formato de data e hora para o display
     setDisplayDateTime() {
         this.displayTime = this.correntDate.toLocaleTimeString(this._locale, {
