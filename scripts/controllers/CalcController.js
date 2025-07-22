@@ -3,6 +3,9 @@ class CalcController {
         this._operation = [];
         this._lastOperator = '';
         this._lastNumber = '';
+
+        this._audioOnOff = false;
+
         this._locale = "pt-BR";
         this._displayCalcEl = document.querySelector("#display");
         this._dateEl = document.querySelector("#data");
@@ -23,6 +26,12 @@ class CalcController {
            this.setDisplayDateTime();
 
         }, 1000);
+
+        document.querySelectorAll('btn-ac').forEach(btn => {
+            btn.addEventListener('dblclick', e => {
+                this.toggleAudio();
+            });
+        })
     }
 
     // Inicializa os eventos dos botões
@@ -42,9 +51,32 @@ class CalcController {
         });
     }
 
+    // Alterna o áudio de feedback ao pressionar os botões... ligar e desligar
+    toggleAudio() {
+        this._audioOnOff = !this._audioOnOff;
+        if (this._audioOnOff) {
+            this.playAudio();
+        } else {
+            this.stopAudio();
+        }
+
+    }
+
+    playAudio() {
+        if (this._audioOnOff) {
+            this._audio = new Audio("click.mp3");
+            this._audio.play().catch(err => {
+                console.error("Erro ao reproduzir o áudio:", err);
+            });
+        }
+    }
+
     // Executa a ação do botão pressionado
     // dependendo do valor do botão
     execBtn(value) {
+
+        this.playAudio(); 
+        
         switch (value) {
             case 'ac':
                 this.clearAll();
