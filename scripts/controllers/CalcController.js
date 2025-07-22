@@ -394,9 +394,8 @@ class CalcController {
         return this._displayCalcEl.innerHTML;
     }
     set displayCalc(value) {
-        if(value.length > 10) {
-            this.setError();
-            return;
+        if (value.toString().length > 10) {
+            value = Number(value).toExponential(5); // Ajuste o número de casas decimais conforme necessário
         }
         this._displayCalcEl.innerHTML = value;
     }
