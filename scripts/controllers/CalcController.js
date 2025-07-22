@@ -68,7 +68,7 @@ class CalcController {
                 this.addOperation('.');
                 break;
             case 'igual':
-                this.addOperation('');
+                this.calc();
                 break;
             case '0':
             case '1':
@@ -90,6 +90,22 @@ class CalcController {
                 this.setError();
                 break;
         }
+    }
+
+    // Retorna o último item do array de operações
+    // se isOperator for true, retorna o último operador
+    getLastItem(isOperator = true) {
+        // Retorna o último item do array de operações
+        // se isOperator for true, retorna o último operador
+        // caso contrário, retorna o último número
+        let lastItem;
+        for (let i = this._operation.length - 1; i >= 0; i--) {
+            if (this.isOperator(this._operation[i]) == isOperator) {
+                lastItem = this._operation[i];
+                break;
+            }
+        }
+        return lastItem;
     }
 
     // Define o último número a ser exibido no display
@@ -140,14 +156,21 @@ class CalcController {
     // e substitui o array de operações pelo resultado e o último operador
     calc(){
 
-        let last = this._operation.pop();
+        let last = '';
+        if (this._operation.length > 3) {
+            last = this._operation.pop();
+        }
+
         let result = eval(this._operation.join(" ")); 
         
         if (last == "%") {
             result = result / 100;
             this._operation = [result];          
         } else {
-            this._operation = [result, last];
+            this._operation = [result];
+            if (last) {
+                this._operation.push(last);
+            }
         }
         this.setLastNumeberToDisplay();
     }
