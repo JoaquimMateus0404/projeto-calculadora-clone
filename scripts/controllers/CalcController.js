@@ -92,6 +92,8 @@ class CalcController {
         }
     }
 
+    // Define o último número a ser exibido no display
+    // Percorre o array de operações de trás para frente
     setLastNumeberToDisplay() {
         let lastNumber;
         for (let i = this._operation.length - 1; i >= 0; i--) {
@@ -140,7 +142,14 @@ class CalcController {
 
         let last = this._operation.pop();
         let result = eval(this._operation.join(" ")); 
-        this._operation = [result, last];
+        
+        if (last == "%") {
+            result = result / 100;
+            this._operation = [result];          
+        } else {
+            this._operation = [result, last];
+        }
+        this.setLastNumeberToDisplay();
     }
 
     // Adiciona uma operação ao array de operações  this._operation[this._operation.length - 1]
@@ -153,6 +162,7 @@ class CalcController {
             } else if (!isNaN(value)) {
                 // Adiciona um número após um operador
                 this.pushOperation(parseInt(value));
+                this.setLastNumeberToDisplay();
             } 
         } else {
             // Última operação é um número
@@ -173,18 +183,14 @@ class CalcController {
     // e redefine o display para "0"
     clearAll() {
         this._operation = [];
-        this.displayCalc = "0";
+        this.setLastNumeberToDisplay();
     }
 
     // Limpa a última entrada da operação
     // e redefine o display para o último valor da operação
     clearEntry() {
         this._operation.pop();
-        if (this._operation.length == 0) {
-            this.displayCalc = "0";
-        } else {
-            this.displayCalc = this.getLastOperation();
-        }
+        this.setLastNumeberToDisplay();
     }
 
     // Adiciona um ouvinte de eventos a um elemento
