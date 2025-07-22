@@ -82,7 +82,7 @@ class CalcController {
             case '9':
                 this.addOperation(parseInt(value));
                 console.log(this._operation);
-                this.displayCalc = this._operation.join(" "); 
+                this.setLastNumeberToDisplay();
                 break;
 
         
@@ -92,6 +92,16 @@ class CalcController {
         }
     }
 
+    setLastNumeberToDisplay() {
+        let lastNumber;
+        for (let i = this._operation.length - 1; i >= 0; i--) {
+            if (!this.isOperator(this._operation[i])) {
+                lastNumber = this._operation[i];
+                break;
+            }
+        }
+        this.displayCalc = lastNumber ? lastNumber : "0";
+    }
     // Define o valor de erro no display
     setError() {
         this.displayCalc = "Error";
@@ -135,7 +145,6 @@ class CalcController {
 
     // Adiciona uma operação ao array de operações  this._operation[this._operation.length - 1]
     addOperation(value) {
-        console.log(value);
         if (isNaN(this.getLastOperation())) { 
             // Última operação é um operador
             if (this.isOperator(value)) {
@@ -154,6 +163,8 @@ class CalcController {
                 // Concatena o número ao último número
                 let newValue = parseInt(this.getLastOperation().toString() + value.toString());
                 this.setLastOperation(newValue);
+
+                this.setLastNumeberToDisplay();
             }
         }
     }
