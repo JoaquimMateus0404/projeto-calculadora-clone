@@ -6,6 +6,8 @@ class CalcController {
 
         this._audioOnOff = false;
 
+        this._audio = new Audio("click.mp3");
+
         this._locale = "pt-BR";
         this._displayCalcEl = document.querySelector("#display");
         this._dateEl = document.querySelector("#data");
@@ -27,7 +29,7 @@ class CalcController {
 
         }, 1000);
 
-        document.querySelectorAll('btn-ac').forEach(btn => {
+        document.querySelectorAll('.btn-ac').forEach(btn => {
             btn.addEventListener('dblclick', e => {
                 this.toggleAudio();
             });
@@ -54,17 +56,11 @@ class CalcController {
     // Alterna o áudio de feedback ao pressionar os botões... ligar e desligar
     toggleAudio() {
         this._audioOnOff = !this._audioOnOff;
-        if (this._audioOnOff) {
-            this.playAudio();
-        } else {
-            this.stopAudio();
-        }
-
     }
 
     playAudio() {
-        if (this._audioOnOff) {
-            this._audio = new Audio("click.mp3");
+        if (this._audioOnOff) { 
+            this._audio.currentTime = 0; // Reinicia o áudio
             this._audio.play().catch(err => {
                 console.error("Erro ao reproduzir o áudio:", err);
             });
@@ -76,7 +72,7 @@ class CalcController {
     execBtn(value) {
 
         this.playAudio(); 
-        
+
         switch (value) {
             case 'ac':
                 this.clearAll();
@@ -293,8 +289,12 @@ class CalcController {
 
     // Inicializa o teclado fisico/virtual
     initKeyBoard() {
+
+       
         document.addEventListener('keyup', e => {
             // Verifica se a tecla pressionada é um número ou um operador
+            this.playAudio();
+
             if (e.key.match(/[0-9]/)) {
                 this.addOperation(parseFloat(e.key));
             } else if (['+', '-', '*', '/', '%'].indexOf(e.key) > -1) {
@@ -394,6 +394,10 @@ class CalcController {
         return this._displayCalcEl.innerHTML;
     }
     set displayCalc(value) {
+        if(value.length > 10) {
+            this.setError();
+            return;
+        }
         this._displayCalcEl.innerHTML = value;
     }
 
