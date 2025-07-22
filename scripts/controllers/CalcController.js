@@ -9,6 +9,7 @@ class CalcController {
         this._timeEl = document.querySelector("#hora");
         this._correntDate;
         this.initialize();
+        this.initKeyBoard(); 
     }
 
     initialize() {
@@ -258,6 +259,7 @@ class CalcController {
         });
     }
 
+    // Inicializa o teclado fisico/virtual
     initKeyBoard() {
         document.addEventListener('keyup', e => {
             // Verifica se a tecla pressionada é um número ou um operador
@@ -273,11 +275,59 @@ class CalcController {
                 this.clearEntry();
             } else if (e.key === '.') {
                 this.addDot('.');
-            } else {
-                this.setError();
+            } else if (e.key === 'c' && e.ctrlKey) {
+                this.copyToClipboard();
+            } else if (e.key === 'v' && e.ctrlKey) {
+                this.pastToClipboard();
             }
         })
     }
+
+    // Copia o valor do display para a área de transferência
+    // utilizando a API Clipboard se disponível
+    copyToClipboard() {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(this.displayCalc)
+                .then(() => {
+                    console.log('Texto copiado para a área de transferência com sucesso!');
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar para a área de transferência:', err);
+                });
+        } else {
+            // Fallback para navegadores que não suportam a API Clipboard
+            let input = document.createElement('input');
+            input.value = this.displayCalc;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            input.remove();
+            console.warn('API Clipboard não suportada. Usando método alternativo.');
+        }
+    }
+
+    // Cola o valor da área de transferência no display
+    pastToClipboard() {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText()
+                .then(text => {
+                    this.displayCalc = parseFloat(text);
+                })
+                .catch(err => {
+                    console.error('Erro ao ler da área de transferência:', err);
+                });
+        } else {
+            // Fallback para navegadores que não suportam a API Clipboard
+            let input = document.createElement('input');
+            document.body.appendChild(input);
+            input.focus();
+            document.execCommand('paste');
+            this.displayCalc = input.value;
+            input.remove();
+            console.warn('API Clipboard não suportada. Usando método alternativo.');
+        }
+    }
+
     // Define o formato de data e hora para o display
     setDisplayDateTime() {
         this.displayTime = this.correntDate.toLocaleTimeString(this._locale, {
