@@ -184,7 +184,13 @@ class CalcController {
 
     // Retorna o resultado da expressão matemática do array de operações
     getResult() {
-        return eval(this._operation.join(" ")); 
+        try {
+            return eval(this._operation.join(" ")); 
+        } catch (error) {
+            setTimeout(() => {
+                this.setError();
+            }, 1);
+        }
     }
 
     // Avalia a expressão matemática do array de operações
